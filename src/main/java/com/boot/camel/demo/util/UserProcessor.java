@@ -1,12 +1,14 @@
 package com.boot.camel.demo.util;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+
 
 import com.boot.camel.demo.model.User;
 import com.boot.camel.demo.model.UserResponse;
@@ -44,8 +46,8 @@ public class UserProcessor implements Processor {
         return createResponse(user, "Successful creation", "201");
     }
 
-    public User getPerson(@Header("id") String id) {
-        return userRepository.findOne(id);
+    public Optional<User> getPerson(@Header("id") String id) {
+        return userRepository.findById(id);
     }
 
     public List<User> getPeopleByFirstName(@Header("firstName") String firstName) {
