@@ -1,6 +1,6 @@
 package com.boot.camel.demo.model;
 
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 
 import lombok.Getter;
 import lombok.Setter;
