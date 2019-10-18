@@ -1,5 +1,6 @@
 package com.boot.camel.demo.route;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,29 +25,40 @@ public class ApacheCamelRoute extends ExceptionRoute {
 	@Autowired
 	private UserAggregationStrategy userAggregationStrategy;
 
-	@Override
-	public void configure() throws Exception {
-		super.configure();
+	@Override public void configure() throws Exception { super.configure();
+	  
+	  restConfiguration().contextPath(contextPath).port(serverPort).enableCORS(true).apiContextPath("/api-doc") 
+	  .apiProperty("api.title", "REST API").apiProperty("api.version", "v1").apiProperty("cors", "true") // cross-site 
+	  .apiContextRouteId("doc-api").component("servlet").bindingMode(
+	  RestBindingMode.json) .dataFormatProperty("prettyPrint", "true");
+	  
+	  rest("/user").id("rest-user").get("").id("rest-user-get").consumes("application/json")
+	  .produces("application/json").to("direct:getAllUser").get("/{id}").id("rest-user-get-id")
+	  .consumes("application/json").produces("application/json").to("direct:getSingleUser").post("")
+	  .id("rest-user-post").consumes("application/json").produces("application/json").type(User.class) .to("direct:postUser");
+	  
+	  from("direct:getAlluser").id("direct-getAlluser").to(
+	  "log:DEBUG?showBody=true&showHeaders=true") .process(userProcessor);
+	  
+	  from("direct:getSingleuser").id("direct-getSingleuser").to(
+	  "log:DEBUG?showBody=true&showHeaders=true") .bean(userProcessor, "getUser");
+	  
+	  from("direct:postuser").id("direct-postuser").to(
+	  "log:DEBUG?showBody=true&showHeaders=true").bean(userProcessor,
+	  "insertUser");
+	  
+	  rest("/user/name") // "/person/name?firstName=First&lastName=Last"
+	  .get("").id("rest-user-name").consumes("application/json").produces(
+	  "application/json").to("direct:getFirstAndLastNames");
+	  
+	  from("direct:getFirstAndLastNames") .multicast()
+	  .aggregationStrategy(userAggregationStrategy) .parallelProcessing()
+	  .streaming() .to("seda:getUserByFirstName", "seda:getUserByLastName");
+	  
+	  from("seda:getUserByFirstName") .bean(userProcessor, "getUserByFirstName");
+	  
+	  from("seda:getUserByLastName") .bean(userProcessor, "getUserByLastName");
+	  
+	  }
 
-		restConfiguration().contextPath(contextPath).port(serverPort).enableCORS(true).apiContextPath("/api-doc")
-				.apiProperty("api.title", "REST API").apiProperty("api.version", "v1").apiProperty("cors", "true") // cross-site
-				.apiContextRouteId("doc-api").component("servlet").bindingMode(RestBindingMode.json)
-				.dataFormatProperty("prettyPrint", "true");
-
-		rest("/user").id("rest-user").get("").id("rest-user-get").consumes("application/json")
-				.produces("application/json").to("direct:getAllUser").get("/{id}").id("rest-user-get-id")
-				.consumes("application/json").produces("application/json").to("direct:getSingleUser").post("")
-				.id("rest-user-post").consumes("application/json").produces("application/json").type(User.class)
-				.to("direct:postUser");
-
-		from("direct:getAlluser").id("direct-getAlluser").to("log:DEBUG?showBody=true&showHeaders=true")
-				.process(userProcessor);
-
-		from("direct:getSingleuser").id("direct-getSingleuser").to("log:DEBUG?showBody=true&showHeaders=true")
-				.bean(userProcessor, "getUser");
-
-		from("direct:postuser").id("direct-postuser").to("log:DEBUG?showBody=true&showHeaders=true").bean(userProcessor,
-				"insertUser");
-
-	}
 }
