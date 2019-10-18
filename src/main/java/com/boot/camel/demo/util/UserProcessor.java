@@ -8,7 +8,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 
 import com.boot.camel.demo.model.User;
 import com.boot.camel.demo.model.UserResponse;
@@ -16,6 +16,7 @@ import com.boot.camel.demo.repository.UserRepository;
 
 import static com.boot.camel.demo.util.CustomHelper.createResponse;
 
+@Component
 public class UserProcessor implements Processor {
 
     @Autowired
@@ -40,21 +41,21 @@ public class UserProcessor implements Processor {
         exchange.getIn().setBody(people);
     }
 
-    public UserResponse<User> insertPerson(Exchange exchange) {
+    public UserResponse<User> insertUser(Exchange exchange) {
         User user = userRepository.insert(exchange.getIn().getBody(User.class));
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "201");
         return createResponse(user, "Successful creation", "201");
     }
 
-    public Optional<User> getPerson(@Header("id") String id) {
+    public Optional<User> getUser(@Header("id") String id) {
         return userRepository.findById(id);
     }
 
-    public List<User> getPeopleByFirstName(@Header("firstName") String firstName) {
+    public List<User> getUserByFirstName(@Header("firstName") String firstName) {
         return userRepository.findByFirstName(firstName);
     }
 
-    public List<User> getPeopleByLastName(@Header("lastName") String lastName) {
+    public List<User> getUserByLastName(@Header("lastName") String lastName) {
         return userRepository.findByLastName(lastName);
     }
 

@@ -3,9 +3,11 @@ package com.boot.camel.demo.util;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Component;
 
 import static com.boot.camel.demo.util.CustomHelper.createResponse;
 
+@Component
 public class ExceptionProcessor implements Processor {
 
     @Override

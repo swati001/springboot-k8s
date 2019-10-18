@@ -6,9 +6,11 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.springframework.stereotype.Component;
 
 import com.boot.camel.demo.model.User;
 
+@Component
 public class UserAggregationStrategy implements AggregationStrategy {
 
     @Override

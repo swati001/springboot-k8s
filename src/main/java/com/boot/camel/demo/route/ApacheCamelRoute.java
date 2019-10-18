@@ -3,11 +3,13 @@ package com.boot.camel.demo.route;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.boot.camel.demo.model.User;
 import com.boot.camel.demo.util.UserAggregationStrategy;
 import com.boot.camel.demo.util.UserProcessor;
 
+@Component
 public class ApacheCamelRoute extends ExceptionRoute {
 
     @Value("${server.port}")
@@ -39,9 +41,9 @@ public class ApacheCamelRoute extends ExceptionRoute {
                 .dataFormatProperty("prettyPrint", "true");
 
         rest("/user").id("rest-user")
-                .get("").id("rest-user-get").consumes("application/json").produces("application/json").to("direct:getAlluser")
-                .get("/{id}").id("rest-user-get-id").consumes("application/json").produces("application/json").to("direct:getSingleuser")
-                .post("").id("rest-user-post").consumes("application/json").produces("application/json").type(User.class).to("direct:postuser");
+                .get("").id("rest-user-get").consumes("application/json").produces("application/json").to("direct:getAllUser")
+                .get("/{id}").id("rest-user-get-id").consumes("application/json").produces("application/json").to("direct:getSingleUser")
+                .post("").id("rest-user-post").consumes("application/json").produces("application/json").type(User.class).to("direct:postUser");
 
         from("direct:getAlluser")
                 .id("direct-getAlluser")
@@ -51,12 +53,12 @@ public class ApacheCamelRoute extends ExceptionRoute {
         from("direct:getSingleuser")
                 .id("direct-getSingleuser")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
-                .bean(userProcessor, "getuser");
+                .bean(userProcessor, "getUser");
 
         from("direct:postuser")
                 .id("direct-postuser")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
-                .bean(userProcessor, "insertuser");
+                .bean(userProcessor, "insertUser");
 
     }
 }
