@@ -10,18 +10,13 @@ import com.boot.camel.demo.util.ExceptionProcessor;
 @Component
 public class ExceptionRoute extends RouteBuilder {
 
-    @Autowired
-    private ExceptionProcessor exceptionProcessor;
+	@Autowired
+	private ExceptionProcessor exceptionProcessor;
 
-    @Override
-    public void configure() throws Exception {
+	@Override
+	public void configure() throws Exception {
 
-        onException(Exception.class)
-                .handled(true)
-                .id("exception-handler")
-                .log("Exception: '${exception.stacktrace}'")
-                .process(exceptionProcessor)
-                .marshal()
-                .json(JsonLibrary.Jackson);
-    }
+		onException(Exception.class).handled(true).id("exception-handler").log("Exception: '${exception.stacktrace}'")
+				.process(exceptionProcessor).marshal().json(JsonLibrary.Jackson);
+	}
 }

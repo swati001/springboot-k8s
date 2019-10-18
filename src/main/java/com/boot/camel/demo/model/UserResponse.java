@@ -6,17 +6,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserResponse<T> {
-	    private T responseObject;
-	    private String responseMessage;
-	    private String responseCode;
+	private T responseObject;
+	private String responseMessage;
+	private String responseCode;
 
-	    @Override
-	    public String toString() {
-	        return "Response{" +
-	                "responseObject=" + responseObject +
-	                ", responseMessage='" + responseMessage + '\'' +
-	                ", responseCode='" + responseCode + '\'' +
-	                '}';
-	    }
+	@Override
+	public String toString() {
+		return "Response{" + "responseObject=" + responseObject + ", responseMessage='" + responseMessage + '\''
+				+ ", responseCode='" + responseCode + '\'' + '}';
+	}
 
 }

@@ -19,44 +19,44 @@ import static com.boot.camel.demo.util.CustomHelper.createResponse;
 @Component
 public class UserProcessor implements Processor {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
+	@Override
+	public void process(Exchange exchange) throws Exception {
 
-        String firstName = (String) exchange.getIn().getHeader("firstName");
-        String lastName = (String) exchange.getIn().getHeader("lastName");
+		String firstName = (String) exchange.getIn().getHeader("firstName");
+		String lastName = (String) exchange.getIn().getHeader("lastName");
 
-        List<User> people = null;
+		List<User> people = null;
 
-        if(StringUtils.isNotBlank(firstName)) {
-            people =  userRepository.findByFirstName(firstName);
-        } else if(StringUtils.isNotBlank(lastName)) {
-            people = userRepository.findByLastName(lastName);
-        } else {
-            people = userRepository.findAll();
-        }
+		if (StringUtils.isNotBlank(firstName)) {
+			people = userRepository.findByFirstName(firstName);
+		} else if (StringUtils.isNotBlank(lastName)) {
+			people = userRepository.findByLastName(lastName);
+		} else {
+			people = userRepository.findAll();
+		}
 
-        exchange.getIn().setBody(people);
-    }
+		exchange.getIn().setBody(people);
+	}
 
-    public UserResponse<User> insertUser(Exchange exchange) {
-        User user = userRepository.insert(exchange.getIn().getBody(User.class));
-        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "201");
-        return createResponse(user, "Successful creation", "201");
-    }
+	public UserResponse<User> insertUser(Exchange exchange) {
+		User user = userRepository.insert(exchange.getIn().getBody(User.class));
+		exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "201");
+		return createResponse(user, "Successful creation", "201");
+	}
 
-    public Optional<User> getUser(@Header("id") String id) {
-        return userRepository.findById(id);
-    }
+	public Optional<User> getUser(@Header("id") String id) {
+		return userRepository.findById(id);
+	}
 
-    public List<User> getUserByFirstName(@Header("firstName") String firstName) {
-        return userRepository.findByFirstName(firstName);
-    }
+	public List<User> getUserByFirstName(@Header("firstName") String firstName) {
+		return userRepository.findByFirstName(firstName);
+	}
 
-    public List<User> getUserByLastName(@Header("lastName") String lastName) {
-        return userRepository.findByLastName(lastName);
-    }
+	public List<User> getUserByLastName(@Header("lastName") String lastName) {
+		return userRepository.findByLastName(lastName);
+	}
 
 }
